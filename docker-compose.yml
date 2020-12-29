@@ -5,7 +5,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    runtime: nvidia
     restart: always
     links:
       - rabbitmq
@@ -19,8 +18,8 @@ services:
       - "8000"
       - "22"
     ports:
-      - "8001:8000"
-      - "8022:22"
+      - "8010:8000"
+      - "8122:22"
     stdin_open: true
     tty: true
   rabbitmq:

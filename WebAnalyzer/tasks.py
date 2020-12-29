@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AnalysisModule.config import DEBUG
 from AnalysisModule.celerys import app
 from celery.signals import worker_init, worker_process_init
@@ -28,21 +27,13 @@ def module_load_init(**__):
     #       - ex) gpu_id = worker_index % TOTAL_GPU_NUMBER
     from Modules.dummy.main import Dummy
     analyzer = Dummy()
+    from Modules.keyword.main import Keyword
+    analyzer = Keyword()
 
 
 @app.task
-def analyzer_by_image(file_path):
-    result = analyzer.inference_by_image(file_path)
-    return result
-
-@app.task
-def analyzer_by_video(data, video_info, analysis_type):
-    if analysis_type == 'video' :
-        result = analyzer.inference_by_video(data, video_info)
-    elif analysis_type == 'audio' :
-        result = analyzer.inference_by_audio(data, video_info)
-    elif analysis_type == 'text' :
-        result = analyzer.inference_by_text(data, video_info)
+def analyzer_by_data(detection_result):
+    result = analyzer.inference_by_data(detection_result)
     return result
 
 
