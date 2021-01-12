@@ -9,6 +9,7 @@ import json
 
 sys.path.append(os.path.abspath("./Modules/keyword/"))
 from textrank_models import KeywordSummarizer
+from WebAnalyzer.utils.media import frames_to_timecode
 import pickle
 import re
 
@@ -92,8 +93,8 @@ class Keyword:
         #self.model = open(model_path, "r")
         pass
 
-    def inference_by_data(self, aggregation_result):
-        result = {'aggregation_result':[]}
+    def inference_by_text(self, data, video_info):
+        result = {'text_result':[]}
         # TODO
         #   - Inference using aggregation result
         
