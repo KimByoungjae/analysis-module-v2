@@ -105,21 +105,35 @@ class Keyword:
             line = line.split('\t')
             userdic.append(line[0])
         ### test set ###
+        test_flag = 1
         keyword_test_list = []
-        for c_i, case in enumerate(testset):
+
+        if test_flag == 0:
+            for c_i, case in enumerate(testset):
+                keyword_test = {}
+                try:
+                    key_test = keyword_extractor.summarize(case[1], topk=5)
+                except:
+                    continue
+                keyword_test['keyword'] = key_test
+                keyword_test['answer'] = case[0]
+                keyword_test_list.append(keyword_test)
+        elif test_flag == 1:
             keyword_test = {}
             try:
-                key_test = keyword_extractor.summarize(case[1], topk=5)
+                key_test = keyword_extractor.summarize(data[video_info], topk=5)
             except:
                 continue
             keyword_test['keyword'] = key_test
-            keyword_test['answer'] = case[0]
             keyword_test_list.append(keyword_test)
+        
+        
 
 
         f1 = 0
         total = 1
         total_num = len(keyword_test_list)
+        
         for t_k in keyword_test_list:
             compare_list = []
             score_list = []
@@ -149,37 +163,22 @@ class Keyword:
                             score_list.pop()
                             score_list.append(rank)
                 result_element = {'label': [{'description': str(compare_list[0]), 'score': score_list[0]}]}
-                result['aggregation_result'].append(result_element)
+                result['text_result'].append(result_element)
 
             print("keyword선택 단어: " + str(compare_list[0]))
-            print("Topic단어: "+str(t_k['answer']))
+            if test_flag == 0:
+                print("Topic단어: "+str(t_k['answer']))
             print("")
             total += 1
-            for word in compare_list:
-                if word == t_k['answer']:
-                    f1 += 1
-                    break
-
-        print("acc(f1) : " + str(f1/total_num*100))
+            if test_flag == 0:
+                for word in compare_list:
+                    if word == t_k['answer']:
+                        f1 += 1
+                        break
         
-        """
-        #########output format########
-        result = {"aggregation_result": [
-            {
-                # 1 timestamp & multiple class
-                'label': [
-                    {'description': 'word_name', 'score': 1.0},
-                    {'description': 'word_name', 'score': 1.0}
-                ],
-            },
-            {
-                # 1 timestamp & 1 class
-                'label': [
-                    {'description': 'word_name', 'score': 1.0}
-                ],
-            }
-        ]}
-        """
+        if test_flag == 0:
+            print("acc(f1) : " + str(f1/total_num*100))
+        
         self.result = result
 
         return self.result
